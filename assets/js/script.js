@@ -4,20 +4,22 @@ let today = moment();
 $("#currentDay").text(today.format("dddd, MMMM Do YYYY"));
 
 function saveTask() {
-  // update row color using below function
-  updateRowColor();
-  // keeps row color up to date every minute
-  setInterval(updateRowColor, 60000);
   //get stuff user put in textarea
   $(".saveBtn").on("click", function () {
     let saveHour = $(".saveBtn").parent().attr("data-time");
+    console.log(saveHour);
     let saveText = $(".saveBtn").parent().find("textarea").val();
     //save that to localstorage
     localStorage.setItem(saveHour, saveText);
   });
   //show message to user
+
   //hide message after so many seconds
+
+  // function to show the task on the screen
   showTask();
+  // update row color using below function
+  updateRowColor();
 }
 
 function showTask() {
