@@ -1,54 +1,68 @@
+// global variables
+const currentDayTimeEl = $("#currentDayTime");
+let currentHour = moment().hour();
+
+scheduler();
+
+// function to set button action and run other functions on page
 function scheduler() {
-  //get stuff user put in textarea
-  $(".saveBtn").on("click", function () {
-    let saveHour = $(this).parent().attr("data-time");
-    let saveText = $(this).parent().find("textarea").val();
-    //save that to localstorage
-    localStorage.setItem(saveHour, saveText);
-  });
-  //show message to user
-
-  //hide message after so many seconds
-
-  // function to show the task on the screen
-  showTask();
+  $(".saveBtn").on("click", handleSave);
+  $(".time-block").each(ManageBlock);
   // function to show time and update every second
   renderTime();
   setInterval(renderTime, 1000);
-  // function to set row colors and update every second
-  updateRowColor();
-  setInterval(updateRowColor, 1000);
 }
 
-function showTask() {
-  $(".time-block").each(function () {
-    let showHour = $(this).attr("data-time");
-    let showText = localStorage.getItem(showHour);
-    $(this).find("textarea").val(showText);
-  });
+// function to combine task display and color change
+function ManageBlock() {
+  showTask(this);
+  updateRowColor(this);
 }
 
+// function to show saved tasks on screen
+function showTask(e) {
+  let showHour = $(e).attr("data-time");
+  let showText = localStorage.getItem(showHour);
+  $(e).find("textarea").val(showText);
+}
+
+// function to set row colors
+function updateRowColor(e) {
+  let blockHour = parseInt($(e).attr("data-time"));
+  // add classes for color changes
+  if (currentHour > blockHour) {
+    $(e).addClass("past");
+  } else if (currentHour < blockHour) {
+    $(e).addClass("future");
+  } else {
+    $(e).addClass("present");
+  }
+}
+
+// function for current time
 function renderTime() {
-  // Define day using Moment
-  let today = moment();
+  const now = moment();
+  // update colors when hour changes
+  if (currentHour != now.hour()) {
+    currentHour = now.hour();
+    $(".time-block").each(ManageBlock);
+  }
   // Set date at top of page
-  $("#currentDayTime").text(today.format("dddd, MMMM Do YYYY, h:mm:ss a"));
+  currentDayTimeEl.text(now.format("dddd, MMMM Do YYYY, h:mm:ss a"));
 }
 
-function updateRowColor() {
-  // set variable to current hour
-  let currentHour = moment().hour();
-  // loop over each row of the class (time-block)
-  $(".time-block").each(function () {
-    let blockHour = $(this).attr("data-time");
-    // add classes for color changes
-    if (currentHour > blockHour) {
-      $(this).addClass("past");
-    } else if (currentHour < blockHour) {
-      $(this).addClass("future");
-    } else {
-      $(this).addClass("present");
-    }
-  });
+// function save data to local storage and handle icon animation
+function handleSave() {
+  let saveHour = $(this).parent().attr("data-time");
+  let saveText = $(this).parent().find("textarea").val();
+  //save that to localstorage
+  localStorage.setItem(saveHour, saveText);
+  const icon = $($(this).children()[0]);
+  //show and hide saved message
+  icon.removeClass("fa-save fas");
+  icon.text("SAVED!");
+  setTimeout(() => {
+    icon.addClass("fa-save fas");
+    icon.empty("SAVED!");
+  }, 1000);
 }
-scheduler();
