@@ -1,6 +1,5 @@
-// Define day and hour using Moment
+// Define day using Moment
 let today = moment();
-
 // Set date at top of page
 $("#currentDay").text(today.format("dddd, MMMM Do YYYY"));
 
@@ -11,17 +10,23 @@ function saveTask() {
   setInterval(updateRowColor, 60000);
   //get stuff user put in textarea
   $(".saveBtn").on("click", function () {
-    let blockHour = $(this).parent().attr("data-time");
-    let textEntry = $(this).parent().find("textarea").val();
+    let saveHour = $(".saveBtn").parent().attr("data-time");
+    let saveText = $(".saveBtn").parent().find("textarea").val();
     //save that to localstorage
-    localStorage.setItem(blockHour, textEntry);
+    localStorage.setItem(saveHour, saveText);
   });
-
   //show message to user
   //hide message after so many seconds
+  showTask();
 }
-// user clicks save button
-// $(".saveBtn").on("click", saveTask);
+
+function showTask() {
+  $(".time-block").each(function () {
+    let showHour = $(this).attr("data-time");
+    let showText = localStorage.getItem(showHour);
+    $(this).find("textarea").val(showText);
+  });
+}
 
 function updateRowColor() {
   // set variable to current hour
@@ -39,6 +44,4 @@ function updateRowColor() {
     }
   });
 }
-
-// // might wrap app in this function, but we'll see //5/1/21
-// $(document).ready(function () {});
+saveTask();
