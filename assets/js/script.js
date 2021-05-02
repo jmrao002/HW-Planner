@@ -1,14 +1,8 @@
-// Define day using Moment
-let today = moment();
-// Set date at top of page
-$("#currentDay").text(today.format("dddd, MMMM Do YYYY"));
-
-function saveTask() {
+function scheduler() {
   //get stuff user put in textarea
   $(".saveBtn").on("click", function () {
-    let saveHour = $(".saveBtn").parent().attr("data-time");
-    console.log(saveHour);
-    let saveText = $(".saveBtn").parent().find("textarea").val();
+    let saveHour = $(this).parent().attr("data-time");
+    let saveText = $(this).parent().find("textarea").val();
     //save that to localstorage
     localStorage.setItem(saveHour, saveText);
   });
@@ -18,8 +12,12 @@ function saveTask() {
 
   // function to show the task on the screen
   showTask();
-  // update row color using below function
+  // function to show time and update every second
+  renderTime();
+  setInterval(renderTime, 1000);
+  // function to set row colors and update every second
   updateRowColor();
+  setInterval(updateRowColor, 1000);
 }
 
 function showTask() {
@@ -28,6 +26,13 @@ function showTask() {
     let showText = localStorage.getItem(showHour);
     $(this).find("textarea").val(showText);
   });
+}
+
+function renderTime() {
+  // Define day using Moment
+  let today = moment();
+  // Set date at top of page
+  $("#currentDayTime").text(today.format("dddd, MMMM Do YYYY, h:mm:ss a"));
 }
 
 function updateRowColor() {
@@ -46,4 +51,4 @@ function updateRowColor() {
     }
   });
 }
-saveTask();
+scheduler();
